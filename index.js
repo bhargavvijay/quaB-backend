@@ -6,17 +6,14 @@ const cors = require('cors');
 
 const app = express();
 
-// Use CORS middleware to allow requests from your frontend
 app.use(cors({
-    origin: 'https://bhargavvijay.github.io/quadB-frontend/', // Update to your frontend's URL
+    origin:  'http://127.0.0.1:5500'
 }));
 
-// Sync Sequelize models with the database
 sequelize.sync({ force: false }).then(() => {
     console.log('Database synced successfully.');
 });
 
-// Fetch top 10 cryptocurrency data from WazirX and store in PostgreSQL
 const fetchData = async () => {
     try {
         const response = await axios.get('https://api.wazirx.com/api/v2/tickers');
@@ -25,10 +22,8 @@ const fetchData = async () => {
             .sort((a, b) => b.volume - a.volume)
             .slice(0, 10);
 
-        // Clear existing data
         await Cryptocurrency.destroy({ truncate: true });
 
-        // Insert new data
         await Cryptocurrency.bulkCreate(topTen.map(item => ({
             name: item.name,
             last: item.last,
@@ -44,11 +39,9 @@ const fetchData = async () => {
     }
 };
 
-// Fetch data immediately and then every 5 minutes
 fetchData();
 setInterval(fetchData, 5 * 60 * 1000);
 
-// API route to get top 10 cryptocurrencies
 app.get('/api/top-ten', async (req, res) => {
     try {
         const data = await Cryptocurrency.findAll({
