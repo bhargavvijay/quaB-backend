@@ -7,7 +7,7 @@ const cors = require('cors');
 const app = express();
 
 app.use(cors({
-    origin:  'https://quadb-assignment-bhargav.netlify.ap'
+    origin:  'https://quadb-assignment-bhargav.netlify.app/'
 }));
 
 sequelize.sync({ force: false }).then(() => {
